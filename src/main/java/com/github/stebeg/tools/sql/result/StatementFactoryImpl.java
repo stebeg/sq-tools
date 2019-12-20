@@ -3,7 +3,6 @@ package com.github.stebeg.tools.sql.result;
 import com.github.stebeg.tools.sql.param.QueryParameter;
 import com.github.stebeg.tools.sql.query.Select;
 import com.github.stebeg.tools.sql.query.Update;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -45,7 +44,11 @@ class StatementFactoryImpl implements StatementFactory {
                 .prepareStatement(query.getQueryString(), generateKey);
         int index = 1;
         for (QueryParameter parameter : query.getParameterList()) {
-            parameter.setValue(statement, index);
+            if (parameter.getValue() == null) {
+                statement.setNull(index, java.sql.Types.NULL);
+            } else {
+                parameter.setValue(statement, index);
+            }
             index++;
         }
         return statement;
